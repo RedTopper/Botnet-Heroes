@@ -1,25 +1,5 @@
 package game;
 
-import game.gfx.Button;
-import game.gfx.ChatBox;
-import game.gfx.ProgressBar;
-import game.gfx.Screen;
-import game.gfx.TextBox;
-import game.handlers.InputHandler;
-import game.handlers.MouseHandler;
-import game.handlers.WindowHandler;
-import game.mobs.Mob;
-import game.net.SocketClient;
-import game.net.SocketServer;
-import game.net.packets.P02Chat;
-import game.net.packets.P03Damage;
-import game.net.packets.P04Update;
-import game.utils.ButtonList;
-import game.utils.Constants;
-import game.utils.Debug;
-import game.utils.Out;
-import game.utils.TextBoxList;
-
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -40,6 +20,27 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 import com.sun.management.OperatingSystemMXBean;
+
+import game.gfx.Button;
+import game.gfx.ChatBox;
+import game.gfx.Font;
+import game.gfx.ProgressBar;
+import game.gfx.Screen;
+import game.gfx.TextBox;
+import game.handlers.InputHandler;
+import game.handlers.MouseHandler;
+import game.handlers.WindowHandler;
+import game.mobs.Mob;
+import game.net.SocketClient;
+import game.net.SocketServer;
+import game.net.packets.P02Chat;
+import game.net.packets.P03Damage;
+import game.net.packets.P04Update;
+import game.utils.ButtonList;
+import game.utils.Constants;
+import game.utils.Debug;
+import game.utils.Out;
+import game.utils.TextBoxList;
 
 /**
  * The main class that instantiates all other variables.
@@ -265,6 +266,8 @@ public class Game extends Canvas implements Runnable {
 			if (chat != null) {
 				chat.render(screen);
 			}
+			Font.render(screen, (lane + 1) + "", 75, 26, 0xFFFFFFFF, false);
+			Font.render(screen, "Level: " + client.getLevel(), 5, 45, 0xFFFFFFFF, false);
 			break;
 		}
 		for (final Button b : buttons.getAll()) {
@@ -467,10 +470,14 @@ public class Game extends Canvas implements Runnable {
 						server.generateNewLevel();
 						packet = getServer().parseDataFromGameToPacket(true);
 					}
-					for (final SocketClient c : getServer().clients) {
-						if (!c.getUsername().equals(client.getUsername())) {
-							c.writeData(packet.getData());
+					if(!packet.isCleanAndFresh()) {
+						for (final SocketClient c : getServer().clients) {
+							if (!c.getUsername().equals(client.getUsername())) {
+								c.writeData(packet.getData());
+							}
 						}
+					} else {
+						packet.writeData(server);
 					}
 				}
 				final P03Damage damage = new P03Damage(client.getUsername(), mouse.getActions(), mouse.getLastClicked());

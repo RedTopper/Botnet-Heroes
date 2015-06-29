@@ -99,4 +99,8 @@ public class SocketClient {
 	public void resetPackets() {
 		reader.resetPackets();
 	}
+	
+	public int getLevel() {
+		return reader.getLevel();
+	}
 }

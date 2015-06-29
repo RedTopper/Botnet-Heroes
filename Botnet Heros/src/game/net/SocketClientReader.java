@@ -35,6 +35,7 @@ public class SocketClientReader extends Thread {
 	private boolean loggedIn = false;
 	private String username;
 	private String fullName = null;
+	private int level = 0;
 
 	private int packetsGot = 0;
 
@@ -157,6 +158,7 @@ public class SocketClientReader extends Thread {
 				}
 			}
 		}
+		level = packet.getLevel();
 	}
 
 	private void handlePacketAsServer(String line) {
@@ -357,4 +359,8 @@ public class SocketClientReader extends Thread {
 		packetsGot = 0;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+	
 }
