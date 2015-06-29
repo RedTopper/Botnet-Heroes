@@ -62,4 +62,8 @@ public class P03Damage extends Packet {
 		s += lastId + "";
 		return s;
 	}
+
+	public int getLastClicked() {
+		return lastId;
+	}
 }

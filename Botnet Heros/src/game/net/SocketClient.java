@@ -103,4 +103,16 @@ public class SocketClient {
 	public int getLevel() {
 		return reader.getLevel();
 	}
+
+	public double getGold() {
+		return reader.getGold();
+	}
+	
+	public void setGold(double gold) {
+		reader.setGold(gold);
+	}
+	
+	public int getLastClicked() {
+		return reader.getLastClicked();
+	}
 }

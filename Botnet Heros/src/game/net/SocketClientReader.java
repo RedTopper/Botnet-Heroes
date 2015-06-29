@@ -36,6 +36,8 @@ public class SocketClientReader extends Thread {
 	private String username;
 	private String fullName = null;
 	private int level = 0;
+	private double gold = 0D;
+	private int lastMob = 0;
 
 	private int packetsGot = 0;
 
@@ -84,7 +86,6 @@ public class SocketClientReader extends Thread {
 					}
 				}
 			} catch (final IOException e) {
-				e.printStackTrace();
 				shutdown(e.toString());
 				return;
 			}
@@ -150,15 +151,18 @@ public class SocketClientReader extends Thread {
 				}
 			}
 		} else {
-			for (int lane = 0; lane < game.mobs.length; lane++) {
-				for (int id = 0; id < game.mobs[0].length; id++) {
-					if (game.mobs[lane][id] != null) {
-						game.mobs[lane][id].setHealth(packet.getHp()[(lane * Constants.MOBS_PER_LANE) + id]);
+			if(!packet.isIgnore()) {
+				for (int lane = 0; lane < game.mobs.length; lane++) {
+					for (int id = 0; id < game.mobs[0].length; id++) {
+						if (game.mobs[lane][id] != null) {
+							game.mobs[lane][id].setHealth(packet.getHp()[(lane * Constants.MOBS_PER_LANE) + id]);
+						}
 					}
 				}
 			}
 		}
 		level = packet.getLevel();
+		gold = packet.getGold();
 	}
 
 	private void handlePacketAsServer(String line) {
@@ -238,7 +242,7 @@ public class SocketClientReader extends Thread {
 		packet.writeData(game.getServer());
 		if (cpacket != null) {
 			cpacket.writeData(game.getServer());
-			final P04Update upacket = game.getServer().parseDataFromGameToPacket(true);
+			final P04Update upacket = game.getServer().parseDataFromGameToPacket(true, 0.0, false);
 			upacket.writeData(game.getServer(), packet.getUsername());
 		}
 	}
@@ -269,6 +273,7 @@ public class SocketClientReader extends Thread {
 				}
 			}
 		}
+		lastMob = packet.getLastClicked();
 	}
 
 	/**
@@ -361,6 +366,18 @@ public class SocketClientReader extends Thread {
 
 	public int getLevel() {
 		return level;
+	}
+
+	public double getGold() {
+		return gold;
+	}
+	
+	public void setGold(double gold) {
+		this.gold = gold;
+	}
+	
+	public int getLastClicked() {
+		return lastMob;
 	}
 	
 }

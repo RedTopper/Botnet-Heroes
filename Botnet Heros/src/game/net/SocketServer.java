@@ -272,7 +272,7 @@ public class SocketServer extends Thread {
 		}
 	}
 
-	public P04Update parseDataFromGameToPacket(boolean cleanAndFresh) {
+	public P04Update parseDataFromGameToPacket(boolean cleanAndFresh, double gold, boolean ignore) {
 		final int[] id = new int[Constants.MOBS_PER_LANE * Constants.LANES];
 		final double[] hp = new double[Constants.MOBS_PER_LANE * Constants.LANES];
 		int index = 0;
@@ -293,7 +293,7 @@ public class SocketServer extends Thread {
 				index++;
 			}
 		}
-		return new P04Update("SERVER", id, hp, cleanAndFresh, level);
+		return new P04Update("SERVER", cleanAndFresh, level, gold, ignore, id, hp);
 	}
 	
 	public synchronized void generateNewLevel() {
