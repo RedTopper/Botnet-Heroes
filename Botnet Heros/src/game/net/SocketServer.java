@@ -300,7 +300,7 @@ public class SocketServer extends Thread {
 		level += 1;
 		for(int lane = 0; lane < game.mobs.length; lane++) {
 			for(int id = 0; id < game.mobs[0].length; id++) {
-				game.mobs[lane][id] = new JerryTheIceCreamMan(id, (double)(((int)(Math.random()*9) + 1) * level ));
+				game.mobs[lane][id] = new JerryTheIceCreamMan(id, (double)((int)(Math.random()*10+Math.pow(10, level))));
 			}
 		}
 	}

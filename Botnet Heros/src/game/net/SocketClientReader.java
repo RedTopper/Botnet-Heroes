@@ -91,7 +91,7 @@ public class SocketClientReader extends Thread {
 		}
 	}
 
-	private void handlePacketAsClient(String line) {
+	private void handlePacketAsClient(String line) { 
 		Debug.out(Out.DEBUG, "game.net.SocketClientReader", "[" + address + ":" + port + "] Client got: " + line);
 		final String message = line.trim();
 		PacketTypes type;
