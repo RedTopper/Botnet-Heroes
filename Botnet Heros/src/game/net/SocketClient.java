@@ -34,7 +34,7 @@ public class SocketClient {
 		reader = new SocketClientReader(game, username, this.socket, false);
 		new Thread(reader).start();
 		Debug.out(Out.INFO, "game.net.SocketClient", "A game client has started!");
-		final P00Login packet = new P00Login(username, true);
+		final P00Login packet = new P00Login(username, true, Game.VERSION);
 		packet.writeData(this);
 	}
 

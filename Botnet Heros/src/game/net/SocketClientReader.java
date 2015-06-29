@@ -128,8 +128,10 @@ public class SocketClientReader extends Thread {
 		if (!loggedIn) {
 			if (packet.getUsername().equals(username) && packet.isSucessful()) {
 				loggedIn = true;
-			} else if (packet.getUsername().equals(username) && !packet.isSucessful()) {
+			} else if (packet.getUsername().equals(username) && !packet.isSucessful() && packet.getVersion().equals(Game.VERSION)) {
 				shutdown("The server refused the connection. The username might be taken.");
+			} else if (packet.getUsername().equals(username) && !packet.isSucessful() && !packet.getVersion().equals(Game.VERSION)) {
+				shutdown("The server refused the connection. Your version: " + Game.VERSION + ". Server's version: " + packet.getVersion());
 			}
 		}
 	}
@@ -208,13 +210,16 @@ public class SocketClientReader extends Thread {
 	}
 
 	private void serverHandleLogin(P00Login packet) {
+		if(!packet.getVersion().equals(Game.VERSION)) {
+			packet = new P00Login(packet.getUsername(), false, Game.VERSION);
+		}
 		for (final SocketClient client : game.getServer().clients) {
 			int num = 0;
 			if (client.getUsername().equals(packet.getUsername())) {
 				num++;
 			}
 			if (num > 0) {
-				packet = new P00Login(packet.getUsername(), false);
+				packet = new P00Login(packet.getUsername(), false, Game.VERSION);
 				break;
 			}
 		}

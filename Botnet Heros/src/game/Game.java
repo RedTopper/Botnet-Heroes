@@ -1,6 +1,3 @@
-/**
- *
- */
 package game;
 
 import game.gfx.Button;
@@ -62,7 +59,7 @@ public class Game extends Canvas implements Runnable {
 	 * logging on to a server, so update it often to prevent out dated clients
 	 * from connecting.
 	 */
-	public static final String VERSION = "v2.0.2";
+	public static final String VERSION = "v2.0.3";
 
 	/**
 	 * The {@link String} of the class. This is displayed in the title.
