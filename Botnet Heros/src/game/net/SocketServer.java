@@ -54,6 +54,8 @@ public class SocketServer extends Thread {
 	private Socket clientSocket;
 
 	private JFrame frame;
+	
+	private int level;
 
 	private static final String[] help = { "Help document: ", "*: Server only.", "/help  - Shows this",
 			"/stop* - Close the server" };
@@ -291,7 +293,16 @@ public class SocketServer extends Thread {
 				index++;
 			}
 		}
-		return new P04Update("SERVER", id, hp, cleanAndFresh);
+		return new P04Update("SERVER", id, hp, cleanAndFresh, level);
+	}
+	
+	public synchronized void generateNewLevel() {
+		level += 1;
+		for(int lane = 0; lane < game.mobs.length; lane++) {
+			for(int id = 0; id < game.mobs[0].length; id++) {
+				game.mobs[lane][id] = new JerryTheIceCreamMan(id, (double)(((int)(Math.random()*9) + 1) * level ));
+			}
+		}
 	}
 
 	public void resetPackets() {
@@ -389,13 +400,5 @@ public class SocketServer extends Thread {
 		writeLog("[INFO][SS] [SS] = game.net.SocketServer, [SCR] = game.net.SocketClientReader");
 		writeLog("[INFO][SS] [SC] = game.net.SocketClient, [SIR] = game.utils.ServerInputHandler.");
 		writeLog(" ");
-
-		game.mobs[0][0] = new JerryTheIceCreamMan(0, (double)((int)(Math.random()*1000)));
-		game.mobs[0][1] = new JerryTheIceCreamMan(1, (double)((int)(Math.random()*1000)));
-		game.mobs[0][2] = new JerryTheIceCreamMan(2, (double)((int)(Math.random()*1000)));
-		game.mobs[1][0] = new JerryTheIceCreamMan(0, (double)((int)(Math.random()*1000)));
-		game.mobs[2][1] = new JerryTheIceCreamMan(1, (double)((int)(Math.random()*1000)));
-		game.mobs[3][2] = new JerryTheIceCreamMan(2, (double)((int)(Math.random()*1000)));
-		game.mobs[4][2] = new JerryTheIceCreamMan(2, (double)((int)(Math.random()*1000)));
 	}
 }

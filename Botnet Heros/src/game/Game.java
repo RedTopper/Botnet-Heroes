@@ -414,6 +414,7 @@ public class Game extends Canvas implements Runnable {
 			localhost = InetAddress.getLoopbackAddress();
 			client = new SocketClient(this, username, localhost, Constants.PORT);
 			stage = Stage.GENERAL_SETUP;
+			server.generateNewLevel();
 			break;
 		case GENERAL_SETUP:
 			textboxes.get(TN.MESSAGE_BOX).state = TextBox.States.ENABLED;
@@ -450,7 +451,22 @@ public class Game extends Canvas implements Runnable {
 			}
 			if ((ticksPassed % Constants.ONE_SIXTH_SECOND) == 0) {
 				if (getServer() != null) {
-					final P04Update packet = getServer().parseDataFromGameToPacket(false);
+					boolean isKill = true;
+					out:for(Mob[] lane : mobs) {
+						for(Mob mob : lane) {
+							if(mob.getHealth() > 0) {
+								isKill = false;
+								break out;
+							}
+						}
+					}
+					final P04Update packet;
+					if(!isKill) {
+						packet = getServer().parseDataFromGameToPacket(false);
+					} else {
+						server.generateNewLevel();
+						packet = getServer().parseDataFromGameToPacket(true);
+					}
 					for (final SocketClient c : getServer().clients) {
 						if (!c.getUsername().equals(client.getUsername())) {
 							c.writeData(packet.getData());
