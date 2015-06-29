@@ -3,12 +3,14 @@ package game.mobs;
 import game.gfx.FontJump;
 import game.gfx.ProgressBar;
 import game.gfx.Screen;
+import game.utils.Renderable;
+import game.utils.Tickable;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class Mob {
+public abstract class Mob implements Renderable, Tickable{
 
 	private final String idle;
 	private final String clicked;
@@ -36,6 +38,8 @@ public abstract class Mob {
 	private int ticks;
 
 	private final CopyOnWriteArrayList<FontJump> jumping = new CopyOnWriteArrayList<>();
+	
+	private boolean justDied = false;
 
 	public Mob(String idle, String clicked, String dead, int idleFrames, int clickedFrames, int deadFrames,
 			int framerate, int id, double hp) {
@@ -161,6 +165,7 @@ public abstract class Mob {
 	private void changeToDead() {
 		animation = 2;
 		frame = 0;
+		justDied = true;
 	}
 
 	public boolean getPressed() {
@@ -193,6 +198,12 @@ public abstract class Mob {
 			}
 			healthBar.setProgress((int) ((hp / init_hp) * 100));
 		}
+	}
+	
+	public boolean justDied() {
+		boolean dead = justDied;
+		justDied = false;
+		return dead;
 	}
 
 	/**

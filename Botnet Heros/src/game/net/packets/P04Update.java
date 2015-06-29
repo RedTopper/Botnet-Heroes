@@ -17,7 +17,7 @@ public class P04Update extends Packet {
 		final String[] dataArray = readData(str).split(",");
 		final int[] id = new int[Constants.MOBS_PER_LANE * Constants.LANES];
 		final double[] hp = new double[Constants.MOBS_PER_LANE * Constants.LANES];
-		if (dataArray.length == (((Constants.MOBS_PER_LANE * Constants.LANES) * 2) + 4)) {
+		if (dataArray.length == (((Constants.MOBS_PER_LANE * Constants.LANES) * 2) + 5)) {
 			username = dataArray[0];
 			cleanAndFresh = dataArray[1].equals("1");
 			level = Integer.parseInt(dataArray[2]);
@@ -98,7 +98,8 @@ public class P04Update extends Packet {
 		s += username + ",";
 		s += (cleanAndFresh ? "1" : "0") + ",";
 		s += level + ",";
-		s += gold;
+		s += gold + ",";
+		s += (ignore ? "1" : "0") + ",";
 		for (final Integer i : id) {
 			s += (i + ",");
 		}

@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -268,6 +270,13 @@ public class Game extends Canvas implements Runnable {
 			}
 			Font.render(screen, (lane + 1) + "", 75, 26, 0xFFFFFFFF, false);
 			Font.render(screen, "Level: " + client.getLevel(), 5, 45, 0xFFFFFFFF, false);
+			if (client.getGold() > 9999999D) {
+				final NumberFormat formatter = new DecimalFormat("0E0");
+				formatter.setMinimumFractionDigits(6);
+				Font.render(screen, formatter.format(client.getGold()), 30, 4, 0xFFE5AF00, false);
+			} else {
+				Font.render(screen, (client.getGold() + "").substring(0, (client.getGold()  + "").indexOf(".")), 30, 4, 0xFFE5AF00, false);
+			}
 			break;
 		}
 		for (final Button b : buttons.getAll()) {
@@ -455,29 +464,37 @@ public class Game extends Canvas implements Runnable {
 			if ((ticksPassed % Constants.ONE_SIXTH_SECOND) == 0) {
 				if (getServer() != null) {
 					boolean isKill = true;
-					out:for(Mob[] lane : mobs) {
-						for(Mob mob : lane) {
-							if(mob.getHealth() > 0) {
+					for(int lane = 0; lane < mobs.length; lane++) {
+						for(int mob = 0; mob < mobs[0].length; mob++) {
+							if(mobs[lane][mob].getHealth() > 0) {
 								isKill = false;
-								break out;
+							}
+							if(mobs[lane][mob].justDied()) {
+								for (final SocketClient c : getServer().clients) {
+									if((c.getLastClicked() / Constants.MOBS_PER_LANE) == lane) {
+										c.setGold(c.getGold() + 10);
+									}
+								}
 							}
 						}
 					}
-					final P04Update packet;
-					if(!isKill) {
-						packet = getServer().parseDataFromGameToPacket(false);
-					} else {
+					P04Update packet;
+					if(isKill) {
 						server.generateNewLevel();
-						packet = getServer().parseDataFromGameToPacket(true);
-					}
-					if(!packet.isCleanAndFresh()) {
 						for (final SocketClient c : getServer().clients) {
-							if (!c.getUsername().equals(client.getUsername())) {
-								c.writeData(packet.getData());
-							}
+							packet = getServer().parseDataFromGameToPacket(true, c.getGold(), false);
+							c.writeData(packet.getData());
 						}
 					} else {
-						packet.writeData(server);
+						for (final SocketClient c : getServer().clients) {
+							if(c.getUsername().equals(client.getUsername())) {
+								//Don't update the host's stuff. Host is always right.
+								packet = getServer().parseDataFromGameToPacket(false, c.getGold(), true);
+							} else {
+								packet = getServer().parseDataFromGameToPacket(false, c.getGold(), false);
+							}
+							c.writeData(packet.getData());
+						}
 					}
 				}
 				final P03Damage damage = new P03Damage(client.getUsername(), mouse.getActions(), mouse.getLastClicked());

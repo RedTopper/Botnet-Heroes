@@ -36,7 +36,8 @@ public class SocketClientReader extends Thread {
 	private String username;
 	private String fullName = null;
 	private int level = 0;
-	private double gold = 0.0;
+	private double gold = 0D;
+	private int lastMob = 0;
 
 	private int packetsGot = 0;
 
@@ -161,6 +162,7 @@ public class SocketClientReader extends Thread {
 			}
 		}
 		level = packet.getLevel();
+		gold = packet.getGold();
 	}
 
 	private void handlePacketAsServer(String line) {
@@ -271,6 +273,7 @@ public class SocketClientReader extends Thread {
 				}
 			}
 		}
+		lastMob = packet.getLastClicked();
 	}
 
 	/**
@@ -363,6 +366,18 @@ public class SocketClientReader extends Thread {
 
 	public int getLevel() {
 		return level;
+	}
+
+	public double getGold() {
+		return gold;
+	}
+	
+	public void setGold(double gold) {
+		this.gold = gold;
+	}
+	
+	public int getLastClicked() {
+		return lastMob;
 	}
 	
 }
