@@ -67,7 +67,7 @@ public class Game extends Canvas implements Runnable {
 	/**
 	 * The {@link String} of the class. This is displayed in the title.
 	 */
-	public static final String NAME = "Botnet Heros";
+	public static final String NAME = "Botnet Heroes";
 
 	/**
 	 * The minimum {@link Out} of debug that is output. Should be
@@ -528,7 +528,7 @@ public class Game extends Canvas implements Runnable {
 							+ "Total Free memory: " + ((r.freeMemory() + (r.maxMemory() - r.totalMemory())) / MB)
 							+ "MiB\n" + "Server Load: " + bd + "%\n" + "Computer Load: " + bd2 + "%");
 				}
-			}
+			} 
 			break;
 		}
 		chat.tick();
